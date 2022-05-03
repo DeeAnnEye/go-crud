@@ -24,7 +24,23 @@ func main() {
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil { log.Fatal(err) }
 
-	databases,err := client.ListDatabaseNames(ctx,bson.M{})
+	// databases,err := client.ListDatabaseNames(ctx,bson.M{})
+	// if err != nil { log.Fatal(err) }
+	// fmt.Println(databases)
+
+	testDatabase := client.Database("test")
+	taskCollection := testDatabase.Collection("task")
+
+	taskResult,err := taskCollection.InsertMany(ctx, []interface{}{
+		bson.D{
+			{"taskName","Shopping"},
+			{"taskDay","17th May"},		
+		},
+		bson.D{
+			{"taskName","Groceries"},
+			{"taskDay","20th May"},		
+		},
+	})
 	if err != nil { log.Fatal(err) }
-	fmt.Println(databases)
+	fmt.Println(taskResult.InsertedIDs...)
 }
